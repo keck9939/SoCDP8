@@ -1,148 +1,15 @@
 
 # SoCDP8   [![Badge Hardware]][Hardware]   [![Badge Software]][Software]
 
-This is an implementation of the 1968 **[DEC PDP-8/I]** on <br>
-a **Xilinx Zynq**, a **FPGA** controller with an **ARM CPU**.
+This fork of SoCDP8 adds a branch (2025.1) which is intended to allow the project to build with Vivado 2025.1.
+In addition, it will add documentation to allow people who are not FPGA and Linux gurus to build it, as the original
+project contains almost no documentation.
 
-Built on the **[PiDP-8/I Console]** by **Oscar Vermeulen**, <br>
-it acts as a replacement for the Raspberry Pi approach.
+There are a couple of items of immediate interest:
+1) The original author has completly built images that allow you to try SoCDP8 easily. They can be found at: https://folko.solhost.org/socdp8/ for either Zynqberry or Pynq-Z2.
+2) The original author also has an incredible Antares logic simulation of the SoCDP8 that can be found at: https://github.com/fpw/antares-pdp-8i. I highly recommend checking this out.
 
-<br>
-<br>
-
-<div align = center>
-
-![Preview]
-
-</div>
-
-<br>
-<br>
-
-## Why a SoC?
-
-Drawback of the **Raspberry Pi + Linux + SIMH** approach:
-
-- **Inaccurate Simulation :** Doesn't allow for single stepping
-- **Long Boot Times :** **Linux** takes a few seconds to boot and start **SIMH**
-- **Dangerous Shutdown :** In the default Raspberry Pi setup, Linux needs a proper shutdown to avoid corrupting the file system
-
-<br>
-
-The **SoCDP8** implements the **PDP-8/I** in **VHDL**, targeting **FPGAs**.
-
-<br>
-
-#### Design
-
-The system is modeled exactly as described in the <br>
-**[Maintenance Manual]**  and **Engineering Drawings**.
-
-*The manual is treated as the project specification, registers* <br>
-*and signals are named as described in the book and register* <br>
-*transfers are modeled as specified in the drawings.*
-
-<br>
-
-#### Peripherals
-
-Peripherals are implemented on the **ARM CPU** on the **SoC**.
-
-This makes device implementation such as the teletype fairly easy.
-
-Code for peripherals can access the onboard <br>
-**SD Card** to retrieve *tapes*, *disk images*, ..
-
-When connected to the **Ethernet** / **WiFi**, the system, including <br>
-its peripherals, can be controlled with a **Web Browser**.
-
-<br>
-<br>
-
-## Project Goals
-
-- Implementing the system as close as possible to the original specifications.
-
-- Providing a *simple replacement* for the **Raspberry Pi**, <br>
-ideally the project runs on a **SoC** board that snaps into <br>
-the **PiDP-8/I Console** in the same way the **Pi** does.
-
-- Have it be operable through a browser using <br>
-a web socket connection between a web server <br>
-on the **ARM** and the **PDP-8** on the **FPGA**.
-
-<br>
-<br>
-
-## Supported SoCs
-
-The project currently only targets the **Zynq** board <br>
-and utilizes the **Pynq-Z2** for development only.
-
-<br>
-
-### Tested Boards
-
-| Board |  |
-|:-----:|:-|
-| **[ZynqBerry]** | <br> ***Xilinx Zynq 7010*** <br><br> - `130€` \| Good Availability <br><br> - **Raspberry Pi** form factor <br><br> - No free **GPIO** pins <br><br> - Has the *smallest* **Zynq** <br><br> |
-| **[Pynq-Z2]** | <br> ***Xilinx Zynq 7020*** <br><br> `132€` \| Good Availability <br><br> - Raspberry Pi Connectors <br><br> - Spare **GPIO** pins, such as a <br><br>  **PMOD** pin, useful for sensors<br> - Switches, buttons, LEDs <br><br> - Requires a ribbon cable to <br>  fit in the **PiDP-8/I** box <br><br> |
-
-<br>
-
-### Other Boards
-
-| Board |  |
-|:-----:|:-|
-| **[DE0-Nano-SoC]** | <br> ***Altera Cyclone V*** <br><br> - `125€` \| International Shipping <br><br> - **Incompatible** 40 pin connector, <br><br>  requires adapter. <br><br> - Many free **GPIO** pins <br><br> - Switches, buttons, LEDs <br><br> |
-
-<br>
-<br>
-
-## Project Status
-
-<br>
-
-### Functional
-
-- **Base System**
-- **Timesharing**
-- **Data Breaks**
-- **Interrupts**
-- **EAE**
-- **I/O**
-
-*These features pass the **MAINDEC** tests and* <br>
-*can be loaded using the **RIM** / **BIN** loaders.*
-<br>
-<br>
-
-### Can Run
-
-- `Focal69`
-- `TSS/8`
-- `OS/8`
-
-<br>
-
-### Peripherals
-
-Implemented in software with only basic functionality.
-
-<br>
-
-### Deviations
-
-To have the **PiDP-8/I** work with the **Zynq** boards, <br>
-unfortunately a little modification had to be made.
-
-The `1KΩ` resistors had to be replaced by `220Ω` ones <br>
-to support the **pullup** resistance of the **Zynq** drivers.
-
-Thankfully, `220Ω` is compatible with the **Raspberry Pi** as well so these resistors also support the original system.
-
-<br>
-
+See the README.md file in the master branch for the original project description.
 
 <!----------------------------------------------------------------------------->
 
