@@ -6,7 +6,7 @@ In addition, it will add documentation to allow people who are not FPGA and Linu
 project contains almost no documentation.
 
 There are a couple of items of immediate interest:
-1) The original author has completly built images that allow you to try SoCDP8 easily. They can be found at: https://folko.solhost.org/socdp8/ for either Zynqberry or Pynq-Z2.
+1) The original author has completly built images that allow you to try SoCDP8 easily. They can be found at: https://folko.solhost.org/socdp8/ for either Zynqberry or Pynq-Z2. Note the username and password for these images is "socdp8".
 2) The original author also has an incredible Antares logic simulation of the SoCDP8 that can be found at: https://github.com/fpw/antares-pdp-8i. I highly recommend checking this out.
 
 See the README.md file in the master branch for the original project description.
