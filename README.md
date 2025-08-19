@@ -11,6 +11,29 @@ There are a couple of items of immediate interest:
 
 See the README.md file in the master branch for the original project description.
 
+## Building
+
+Create a working directory, e.g. zynqdp8, to hold the SoCDP8 files and the Vivado project. Put a clone of the 2025.1 branch of SoCDP8 in this directory. Copy `SoCDP8\src\fpga\boards\pynq-z2-project.tcl` to `zynqdp8\pynq-z2-project.tcl` and copy `SoCDP8\src\fpga\boards\blockdesign\pynq_z2_block.tcl` to `zynqdp8\pynq_z2_block.tcl`. Your directory should look like:
+```
+.
+├── SoCDP8
+│   ├── LICENSE
+│   ├── LICENSE-HARDWARE
+│   ├── README.md
+│   ├── docs
+│   ├── pictures
+│   └── src
+├── pynq-z2-project.tcl
+└── pynq_z2_block.tcl
+```
+
+Open Vivado 2025.1 (other versions may work, but you will need to edit `pynq_z2_block.tcl` to reflect the version). In the Tcl console cd to the location of your working directory. Then `source pynq-z2-project.tcl`. At the `Invalid Top Module` prompt just choose `OK`. Once this is done, `source pynq_z2_block.tcl`. Now in the Vivado block design sources tab, right click on the `pynq_z2_block_i` entry and choose `Create HDL Wrapper`. Set the resulting wrapper as the design top.
+
+In the Design Flow choose Generate Bitstream. The project should successfully build the bitstream file.
+
+This was tested on Windows 11 with Vivado 2025.1. I would expect it to work on Linux as well.
+
+
 <!----------------------------------------------------------------------------->
 
 [PiDP-8/I Console]: https://obsolescence.wixsite.com/obsolescence/pidp-8
