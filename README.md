@@ -6,8 +6,8 @@ In addition, it will add documentation to allow people who are not FPGA and Linu
 project contains almost no documentation.
 
 There are a couple of items of immediate interest:
-1) The original author has completly built images that allow you to try SoCDP8 easily. They can be found at: https://folko.solhost.org/socdp8/ for either Zynqberry or Pynq-Z2. Note the username and password for these images is "socdp8".
-2) The original author also has an incredible Antares logic simulation of the SoCDP8 that can be found at: https://github.com/fpw/antares-pdp-8i. I highly recommend checking this out.
+1) The original author has completly built images that allow you to try SoCDP8 easily. They can be found at: https://folko.solhost.org/socdp8/ for either Zynqberry or Pynq-Z2. Note the username and password for these images is "socdp8". Unfortunately these images do not seem to be up to date with the repo.
+2) The original author also has an incredible Antares logic simulation of the PDP-8/I that can be found at: https://github.com/fpw/antares-pdp-8i. I highly recommend checking this out.
 
 See the README.md file in the master branch for the original project description.
 
@@ -30,6 +30,10 @@ Create a working directory, e.g. zynqdp8, to hold the SoCDP8 files and the Vivad
 Open Vivado 2025.1 (other versions may work, but you will need to edit `pynq_z2_block.tcl` to reflect the version). In the Tcl console cd to the location of your working directory. Then `source pynq-z2-project.tcl`. At the `Invalid Top Module` prompt just choose `OK`. Once this is done, `source pynq_z2_block.tcl`. Now in the Vivado block design sources tab, right click on the `pynq_z2_block_i` entry and choose `Create HDL Wrapper`. Set the resulting wrapper as the design top.
 
 In the Design Flow choose Generate Bitstream. The project should successfully build the bitstream file.
+
+In principle, you should be able to replace the .bit file in the /boot directory of the .wic image referenced above with the one generated here and it should work. I found my system locked up when I did this. This may be because the .wic image does not reflect the current rtl, but at this point I'm not sure.
+
+To be continued...
 
 This was tested on Windows 11 with Vivado 2025.1. I would expect it to work on Linux as well.
 
