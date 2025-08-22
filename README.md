@@ -32,11 +32,19 @@ Open Vivado 2025.1 (other versions may work, but you will need to edit `pynq_z2_
 In the Design Flow choose Generate Bitstream. The project should successfully build the bitstream file.
 
 In principle, you should be able to replace the .bit file in the /boot directory of the .wic image referenced above with the one generated here and it should work. I found my system locked up when I did this. This may be because the .wic image does not reflect the current rtl, but at this point I'm not sure.
-
-To be continued...
-
 This was tested on Windows 11 with Vivado 2025.1. I would expect it to work on Linux as well.
 
+Since Petalinux, the usual way to build Linux for Zynq, uses Yocto under the hood, it is unclear from the sources which the original author used to build his image. Judging from the running image, he used Yocto. However, I was unable to get anywhere with Yocto, in part due to versioning issues (Yocto builds depend on the underying OS version and Yocto version). In addition, AMD/Xilinxs info on using Yocto to build are kind of sketchy (admitedly I'm not a Yocto expert, but then you shouldn't need to be to build a simple system). So I have decided to build the system with Petalinux. This is straight forward and I believe the only thing that really needs to be added to the Petalinux image is nodejs.
+
+So create a Petalinux project using the XSA file generated from the Vivado build above. Note that I am using Petalinux 2025.1 on Ubuntu 22.04 running on WSL 2. To add nodejs, edit `project-spec/meta-user/conf/user-rootfsconfig` and add the line `CONFIG_nodejs`. Then do a `petalinux-config -c rootfs`, go to `user packages` and enable nodejs. (https://adaptivesupport.amd.com/s/question/0D54U00007SIihbSAD/how-do-i-enable-install-nodejs-in-petalinux-20222?language=en_US)
+
+Build the system and run it on your Zynq. You should be able to type `node -v` and see the node version.
+
+The next task is to build the node package that runs the web server. Again versioning issues kick in. After a lot of messing around I discovered the Node Version Manager, nvm. Using that I installed node 18.20..8 (not too new, not too old). But ran into issues with mmap-io, which is old and no longer maintained. Fortunately, there are forked maintained versions, so edit `server/package.json` and change the mmap-io dependency to `"mmap-io": "npm:@riaskov/mmap-io@^1.4.3"`. Here I'm working with Ubuntu 24.04, again on WSL 2. The package should now install, build and prepack on your system.
+
+Since this package incorporates compiled C++ code, unfortunately it can't just be used on the Zynq as is. So it is going to need to be cross compiled.
+
+To be continued...
 
 <!----------------------------------------------------------------------------->
 
