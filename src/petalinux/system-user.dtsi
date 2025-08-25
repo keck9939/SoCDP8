@@ -1,0 +1,24 @@
+/include/ "system-conf.dtsi"
+
+/ {
+aliases {
+	socdp8_core = &pdp8i_axi_bram;
+	socdp8_console = &pdp8i_console_mux;
+	socdp8_io = &pdp8i_io_controller;
+	};
+};
+
+&pdp8i_axi_bram {
+	compatible = "generic-uio";
+    reg-names = "socdp8_core_mem";
+	};
+	
+&pdp8i_console_mux {
+	compatible = "generic-uio";
+    reg-names = "socdp8_console";
+	};
+	
+&pdp8i_io_controller {
+	compatible = "generic-uio";
+    reg-names = "socdp8_io_ctrl";
+	};
