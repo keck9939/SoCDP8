@@ -17,9 +17,9 @@
  */
 
 import * as express from 'express';
-import * as cors from 'cors';
-import { Server as HTTPServer } from 'http';
+import { Server as HTTPServer } from 'https';
 import { SoCDP8 } from './models/SoCDP8';
+import * as fs from 'fs';
 import { isDeepStrictEqual, promisify } from 'util';
 import { SystemConfigurationList } from './models/SystemConfigurationList';
 import { SystemConfiguration } from './types/SystemConfiguration';
@@ -49,15 +49,20 @@ export class AppServer {
         });
 
         this.app = express();
-        this.app.use(cors());
-        this.app.use(express.static(__dirname + '/../public'));
-
-        this.httpServer = new HTTPServer(this.app);
-        this.socket = new Server(this.httpServer, {
-            cors: {
-                origin: "*",
+        this.app.use(express.static(__dirname + '/../public', {
+      		setHeaders: (res) => {
+    		res.set('Cross-Origin-Opener-Policy', 'same-origin');
+		    res.set('Cross-Origin-Embedder-Policy', 'require-corp');
             }
-        });
+        }));
+
+        this.httpServer = new HTTPServer(
+            {
+      		key: fs.readFileSync("ssl/key.pem"),
+      		cert: fs.readFileSync("ssl/cert.pem"),
+    		}, this.app);
+
+        this.socket = new Server(this.httpServer);
         this.setupSocketAPI();
     }
 
