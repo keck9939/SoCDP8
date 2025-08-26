@@ -1,24 +1,38 @@
 /include/ "system-conf.dtsi"
 
 / {
+
+fclk0:fclk0 {
+   status = "okay";
+   compatible = "xlnx,fclk";
+   clocks = <&clkc 15>;
+  };
+
+ 
 aliases {
-	socdp8_core = &pdp8i_axi_bram;
+	socdp8_core = &pdp8i_axi_bram_ctrl_0;
 	socdp8_console = &pdp8i_console_mux;
 	socdp8_io = &pdp8i_io_controller;
 	};
 };
 
-&pdp8i_axi_bram {
+&pdp8i_axi_bram_ctrl_0 {
 	compatible = "generic-uio";
     reg-names = "socdp8_core_mem";
+	/delete-property/ clock-names;
+	/delete-property/ clocks;
 	};
 	
 &pdp8i_console_mux {
 	compatible = "generic-uio";
     reg-names = "socdp8_console";
+	/delete-property/ clock-names;
+	/delete-property/ clocks;
 	};
 	
 &pdp8i_io_controller {
 	compatible = "generic-uio";
     reg-names = "socdp8_io_ctrl";
+	/delete-property/ clock-names;
+	/delete-property/ clocks;
 	};
