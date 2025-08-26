@@ -51,9 +51,9 @@ export class SoCDP8 {
 
     public constructor(private readonly dataDir: string, private ioListener: IOListener) {
         const uio = new UIOMapper();
-        const memBuf = uio.mapUio('socdp8_core', 'socdp8_core_mem');
-        const consBuf = uio.mapUio('socdp8_console', 'socdp8_console');
-        const ioBuf = uio.mapUio('socdp8_io', 'socdp8_io_ctrl');
+        const memBuf = uio.mapUio('axi_bram_ctrl@40000000', 'socdp8_core_mem');
+        const consBuf = uio.mapUio('console_mux@43c10000', 'socdp8_console');
+        const ioBuf = uio.mapUio('io_controller@43c00000', 'socdp8_io_ctrl');
 
         this.cons = new Console(consBuf);
         this.mem = new CoreMemory(memBuf);
