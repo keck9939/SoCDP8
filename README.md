@@ -10,7 +10,7 @@ There are a couple of items of immediate interest:
 2) The original author also has an incredible Antares logic simulation of the PDP-8/I that can be found at: https://github.com/fpw/antares-pdp-8i. I highly recommend checking this out.
 
 ## Building
-Build instructions are in BUILD.md.
+Build instructions are in BUILDING.md.
 
 ## Original README
 
