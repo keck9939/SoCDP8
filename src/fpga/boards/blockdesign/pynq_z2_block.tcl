@@ -46,7 +46,7 @@ if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
 
 # The design that will be created by this Tcl script contains the following 
 # module references:
-# axi_bram, console_mux, io_controller, pdp8, pidp8_console, xilinx_console_driver
+# console_mux, io_controller, pdp8, pidp8_console, xilinx_console_driver
 
 # Please add the sources of those modules before sourcing this Tcl script.
 
@@ -139,6 +139,8 @@ if { $bCheckIPs == 1 } {
 xilinx.com:ip:processing_system7:5.5\
 xilinx.com:ip:smartconnect:1.0\
 xilinx.com:ip:proc_sys_reset:5.0\
+xilinx.com:ip:axi_bram_ctrl:4.1\
+xilinx.com:ip:blk_mem_gen:8.4\
 "
 
    set list_ips_missing ""
@@ -164,7 +166,6 @@ xilinx.com:ip:proc_sys_reset:5.0\
 set bCheckModules 1
 if { $bCheckModules == 1 } {
    set list_check_mods "\ 
-axi_bram\
 console_mux\
 io_controller\
 pdp8\
@@ -256,17 +257,6 @@ proc create_hier_cell_pdp8i { parentCell nameHier } {
   create_bd_pin -dir I -from 1 -to 0 uart_rx
   create_bd_pin -dir O -from 1 -to 0 uart_tx
 
-  # Create instance: axi_bram, and set properties
-  set block_name axi_bram
-  set block_cell_name axi_bram
-  if { [catch {set axi_bram [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
-     catch {common::send_gid_msg -ssname BD::TCL -id 2095 -severity "ERROR" "Unable to add referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
-     return 1
-   } elseif { $axi_bram eq "" } {
-     catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
-     return 1
-   }
-  
   # Create instance: console_mux, and set properties
   set block_name console_mux
   set block_cell_name console_mux
@@ -322,27 +312,48 @@ proc create_hier_cell_pdp8i { parentCell nameHier } {
      return 1
    }
   
+  # Create instance: axi_bram_ctrl_0, and set properties
+  set axi_bram_ctrl_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_bram_ctrl:4.1 axi_bram_ctrl_0 ]
+  set_property CONFIG.SINGLE_PORT_BRAM {1} $axi_bram_ctrl_0
+
+
+  # Create instance: blk_mem_gen_0, and set properties
+  set blk_mem_gen_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:blk_mem_gen:8.4 blk_mem_gen_0 ]
+  set_property -dict [list \
+    CONFIG.Enable_32bit_Address {false} \
+    CONFIG.Enable_B {Always_Enabled} \
+    CONFIG.Memory_Type {True_Dual_Port_RAM} \
+    CONFIG.Register_PortA_Output_of_Memory_Primitives {false} \
+    CONFIG.Register_PortB_Output_of_Memory_Primitives {false} \
+    CONFIG.Write_Depth_A {32767} \
+    CONFIG.Write_Width_A {12} \
+    CONFIG.use_bram_block {Stand_Alone} \
+  ] $blk_mem_gen_0
+
+
   # Create interface connections
   connect_bd_intf_net -intf_net Conn1 [get_bd_intf_pins S_AXI_IO] [get_bd_intf_pins io_controller/S_AXI]
-  connect_bd_intf_net -intf_net Conn2 [get_bd_intf_pins S_AXI_RAM] [get_bd_intf_pins axi_bram/S_AXI]
   connect_bd_intf_net -intf_net Conn3 [get_bd_intf_pins S_AXI_CONSOLE] [get_bd_intf_pins console_mux/S_AXI]
+  connect_bd_intf_net -intf_net S_AXI_RAM_1 [get_bd_intf_pins S_AXI_RAM] [get_bd_intf_pins axi_bram_ctrl_0/S_AXI]
+  connect_bd_intf_net -intf_net axi_bram_ctrl_0_BRAM_PORTA [get_bd_intf_pins axi_bram_ctrl_0/BRAM_PORTA] [get_bd_intf_pins blk_mem_gen_0/BRAM_PORTA]
 
   # Create port connections
   connect_bd_net -net Net  [get_bd_pins column_io] \
   [get_bd_pins xilinx_console_driver/column_io]
   connect_bd_net -net S_AXI_ARESETN_1_1  [get_bd_pins S_AXI_ARESETN_1] \
-  [get_bd_pins axi_bram/S_AXI_ARESETN] \
   [get_bd_pins console_mux/S_AXI_ARESETN] \
-  [get_bd_pins io_controller/S_AXI_ARESETN]
-  connect_bd_net -net axi_bram_data_out  [get_bd_pins axi_bram/data_out] \
+  [get_bd_pins io_controller/S_AXI_ARESETN] \
+  [get_bd_pins axi_bram_ctrl_0/s_axi_aresetn]
+  connect_bd_net -net blk_mem_gen_0_doutb  [get_bd_pins blk_mem_gen_0/doutb] \
   [get_bd_pins pdp8/mem_in_data]
   connect_bd_net -net clk_1  [get_bd_pins S_AXI_ACLK] \
-  [get_bd_pins axi_bram/S_AXI_ACLK] \
   [get_bd_pins console_mux/S_AXI_ACLK] \
   [get_bd_pins io_controller/S_AXI_ACLK] \
   [get_bd_pins pdp8/clk] \
   [get_bd_pins pidp8_console/clk] \
-  [get_bd_pins xilinx_console_driver/clk]
+  [get_bd_pins xilinx_console_driver/clk] \
+  [get_bd_pins axi_bram_ctrl_0/s_axi_aclk] \
+  [get_bd_pins blk_mem_gen_0/clkb]
   connect_bd_net -net console_mux_0_switch_cont  [get_bd_pins console_mux/switch_cont_pdp] \
   [get_bd_pins pdp8/switch_cont]
   connect_bd_net -net console_mux_0_switch_data_field  [get_bd_pins console_mux/switch_data_field_pdp] \
@@ -409,12 +420,6 @@ proc create_hier_cell_pdp8i { parentCell nameHier } {
   [get_bd_pins io_controller/iop]
   connect_bd_net -net pdp8_0_io_mb  [get_bd_pins pdp8/io_mb] \
   [get_bd_pins io_controller/io_mb]
-  connect_bd_net -net pdp8_0_mem_out_addr  [get_bd_pins pdp8/mem_out_addr] \
-  [get_bd_pins axi_bram/addr]
-  connect_bd_net -net pdp8_0_mem_out_data  [get_bd_pins pdp8/mem_out_data] \
-  [get_bd_pins axi_bram/data_in]
-  connect_bd_net -net pdp8_0_mem_out_write  [get_bd_pins pdp8/mem_out_write] \
-  [get_bd_pins axi_bram/write]
   connect_bd_net -net pdp8_brk_ack  [get_bd_pins pdp8/brk_ack] \
   [get_bd_pins io_controller/brk_ack]
   connect_bd_net -net pdp8_brk_done  [get_bd_pins pdp8/brk_done] \
@@ -449,6 +454,12 @@ proc create_hier_cell_pdp8i { parentCell nameHier } {
   [get_bd_pins console_mux/led_state_pdp]
   connect_bd_net -net pdp8_led_step_counter  [get_bd_pins pdp8/led_step_counter] \
   [get_bd_pins console_mux/led_step_counter_pdp]
+  connect_bd_net -net pdp8_mem_out_addr  [get_bd_pins pdp8/mem_out_addr] \
+  [get_bd_pins blk_mem_gen_0/addrb]
+  connect_bd_net -net pdp8_mem_out_data  [get_bd_pins pdp8/mem_out_data] \
+  [get_bd_pins blk_mem_gen_0/dinb]
+  connect_bd_net -net pdp8_mem_out_write  [get_bd_pins pdp8/mem_out_write] \
+  [get_bd_pins blk_mem_gen_0/web]
   connect_bd_net -net pidp8_console_column_out  [get_bd_pins pidp8_console/column_out] \
   [get_bd_pins xilinx_console_driver/column_in]
   connect_bd_net -net pidp8_console_column_t  [get_bd_pins pidp8_console/column_t] \
@@ -1162,7 +1173,7 @@ proc create_root_design { parentCell } {
   [get_bd_pins pdp8i/uart_rx]
 
   # Create address segments
-  assign_bd_address -offset 0x43C20000 -range 0x00020000 -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs pdp8i/axi_bram/S_AXI/reg0] -force
+  assign_bd_address -offset 0x40000000 -range 0x00020000 -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs pdp8i/axi_bram_ctrl_0/S_AXI/Mem0] -force
   assign_bd_address -offset 0x43C10000 -range 0x00010000 -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs pdp8i/console_mux/S_AXI/reg0] -force
   assign_bd_address -offset 0x43C00000 -range 0x00010000 -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs pdp8i/io_controller/S_AXI/reg0] -force
 
