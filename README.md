@@ -12,6 +12,10 @@ There are a couple of items of immediate interest:
 ## Building
 Build instructions are in BUILDING.md.
 
+You might think, that after all the effort of building this, the web server would serve up a PDP8 page that was connected to the SocDP8. You would be wrong. The code that would allow the client page to connect to the SocDP8 is hard coded out. You are actually running some sort of wasm emulator. Go figure!
+
+I am working on removing the wasm stuff and re-enabling the socket connection to the SocDP8 and will update things when I have something that works.
+
 ## Original README
 
 This is an implementation of the 1968 **[DEC PDP-8/I]** on <br>
