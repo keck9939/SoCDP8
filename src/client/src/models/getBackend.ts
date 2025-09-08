@@ -15,7 +15,7 @@ export function getBackend() {
         enableMapSet();
 
         let backend;
-        if (true) {
+        if (false) {
             backend = new Wasm8Backend();
         } else {
             backend = new SocketBackend(url);
