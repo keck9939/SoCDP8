@@ -14,7 +14,7 @@ Build instructions are in BUILDING.md.
 
 You might think, that after all the effort of building this, the web server would serve up a PDP8 page that was connected to the SocDP8. You would be wrong. The code that would allow the client page to connect to the SocDP8 is hard coded out. You are actually running some sort of wasm emulator. Go figure!
 
-The current version now removes the wasm stuff and uses the socket backend. Some things now work, some don't. I believe this is because the socket backend is not completely up to date with the client code.
+The current version now removes the wasm stuff and uses the socket backend. Some things now work, some don't. There seem to be a number of obscure issues I'm trying to find.
 
 ## Original README
 

@@ -19,22 +19,22 @@
 import { DataBreakRequest, DataBreakReply } from "../IO/DataBreak";
 
 export class CoreMemory {
-    private buf: Buffer;
+    private buf: Uint16Array;
 
     public constructor(memBuf: Buffer) {
-        this.buf = memBuf;
+        this.buf = new Uint16Array(memBuf.buffer, memBuf.byteOffset, memBuf.length/Uint16Array.BYTES_PER_ELEMENT);
     }
 
     public getWordCount(): number {
-        return this.buf.length / 4;
+        return this.buf.length / 2;
     }
 
     public peekWord(addr: number): number {
-        return this.buf.readUInt16LE(addr * 4);
+        return this.buf[addr * 2];
     }
 
     public pokeWord(addr: number, value: number): void {
-        this.buf.writeUInt16LE(value, addr * 4);
+        this.buf[addr*2] = value;
     }
 
     public dumpCore(): Uint16Array {
