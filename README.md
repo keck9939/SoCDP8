@@ -14,7 +14,7 @@ Build instructions are in BUILDING.md.
 
 You might think, that after all the effort of building this, the web server would serve up a PDP8 page that was connected to the SocDP8. You would be wrong. The code that would allow the client page to connect to the SocDP8 is hard coded out. You are actually running some sort of wasm emulator. Go figure!
 
-The current version now removes the wasm stuff and uses the socket backend. Some things now work, some don't. There seem to be a number of obscure issues I'm trying to find.
+The current version now removes the wasm stuff and uses the socket backend. Most things work, a few don't. Those that don't, don't because as far as I can tell they were never implemented for the socket (FPGA) back end. Notably, `DOWNLOAD DUMP` of the PDP8 core will crash the server. `DOWNLOAD IMAGE` for the TC08 does nothing, which is unfortunate because you can't save changes to tapes you have written. I have been able to use paper tape to load the editor and also boot OS/8 off the DECtape, create, assemble and run a PAL program.
 
 ## Original README
 
