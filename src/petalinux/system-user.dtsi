@@ -36,3 +36,10 @@ aliases {
 	/delete-property/ clock-names;
 	/delete-property/ clocks;
 	};
+	
+&gem0 {
+	phy-handle = <&gem0_phy>;
+	gem0_phy: ethernet-phy@0 {
+		reg = <0>;
+		};
+	};
